@@ -1,16 +1,13 @@
 --[[
-    GemTitan: TITAN EDITION (Rayfield Fusion)
+    GemTitan: TITAN EDITION (Pure Rayfield)
     Kodlayan: Kodlama Desteği (AI)
-    Sürüm: 4.1 Ultimate Rayfield
-    
-    ÖZET:
-    - GemBoost X (Görsel Düşürme)
-    - Titanium Gen2 (Akıllı Mantık & Işık)
-    - God Mode (20+ Ağır Optimizasyon)
+    Sürüm: 4.2 Ultimate
 ]]
 
 --// 1. KÜTÜPHANE VE HİZMETLER
+-- Rayfield kütüphanesi yükleniyor
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
@@ -26,9 +23,7 @@ local GemTitan = {
     Loops = {},
     Config = {
         SmartCulling = false,
-        AIMode = false,
         BackFPS = false,
-        DebrisLoop = false,
         NoRender = false
     }
 }
@@ -36,7 +31,7 @@ local GemTitan = {
 --// 3. UI PENCERESİ (Rayfield)
 local Window = Rayfield:CreateWindow({
    Name = "GemTitan: TITAN EDITION",
-   LoadingTitle = "Sistem Yükleniyor...",
+   LoadingTitle = "Yükleniyor...",
    LoadingSubtitle = "GemTitan Ultimate",
    ConfigurationSaving = {
       Enabled = true,
@@ -102,7 +97,7 @@ function GemLogic.RemoveEffects()
 end
 
 function GemLogic.UnlockFPS()
-    DoSafe(function() setfpscap(999) end)
+    DoSafe(function() setfpscap(10000) end)
 end
 
 -- TitanLogic (System)
@@ -189,7 +184,7 @@ function GodLogic.RemoveAccessories()
                 end
             end
         end
-        SendNotif("God Mode", "Aksesuarlar Silindi.")
+        SendNotif("God Mode", "Aksesuarlar başarıyla Silindi.")
     end)
 end
 
@@ -213,7 +208,7 @@ function GodLogic.AnchorAll()
                 v.Anchored = true
             end
         end
-        SendNotif("God Mode", "Dünya Sabitlendi (Anchor).")
+        SendNotif("God Mode", "fizikler kaldırıldı (Anchor).")
     end)
 end
 
@@ -224,7 +219,7 @@ function GodLogic.RemoveGUI3D()
                 v:Destroy()
             end
         end
-        SendNotif("God Mode", "3D Yazılar Silindi.")
+        SendNotif("God Mode", "Gereksiz 3D yazılar Silindi.")
     end)
 end
 
@@ -234,7 +229,7 @@ function GodLogic.DeleteTerrain()
         Workspace.WaterWaveSize = 0
         Workspace.WaterReflectance = 0
         Workspace.WaterTransparency = 0
-        SendNotif("God Mode", "Arazi (Terrain) Temizlendi.")
+        SendNotif("God Mode", "Arazi Temizlendi.")
     end)
 end
 
@@ -242,7 +237,7 @@ function GodLogic.ToggleNoRender(state)
     GemTitan.Config.NoRender = state
     RunService:Set3dRenderingEnabled(not state)
     if state then
-        SendNotif("God Mode", "3D Render Kapalı (Siyah Ekran)")
+        SendNotif("God Mode", "3D Render Kapalı")
     else
         SendNotif("God Mode", "3D Render Açık")
     end
@@ -256,7 +251,7 @@ function GodLogic.StreamerMode()
                 v.Name = "Player"
             end
         end
-        SendNotif("Utils", "Streamer Modu Aktif.")
+        SendNotif("Utils", "yayıncı Modu Aktif.")
     end)
 end
 
@@ -372,21 +367,21 @@ end
 --------------------------------------------------------------------------------
 
 -- TAB 1: GEMBOOST (Temel)
-local TabGem = Window:CreateTab("Visuals", 4483362458) -- Görsel simgesi
+local TabGem = Window:CreateTab("Visuals", 4483362458)
 TabGem:CreateSection("Ana Grafikler")
 
 TabGem:CreateButton({
-   Name = "Low Textures (Plastic)",
+   Name = "remove Textures🧱",
    Callback = function() GemLogic.LowTextures() end,
 })
 
 TabGem:CreateButton({
-   Name = "Remove Effects (Fog/Blur)",
+   Name = "Remove Effects✨ (Fog/Blur)",
    Callback = function() GemLogic.RemoveEffects() end,
 })
 
 TabGem:CreateToggle({
-   Name = "Unlock FPS (999)",
+   Name = "Unlock FPS👾 (999)",
    CurrentValue = false,
    Flag = "UnlockFPS",
    Callback = function(Value)
@@ -399,12 +394,12 @@ local TabTitan = Window:CreateTab("System", 4483362458)
 TabTitan:CreateSection("Akıllı Sistemler")
 
 TabTitan:CreateButton({
-   Name = "FullBright (Karanlık Yok)",
+   Name = "FullBright☀️ (Karanlık Yok)",
    Callback = function() TitanLogic.FullBright() end,
 })
 
 TabTitan:CreateButton({
-   Name = "Remove Invisible Walls",
+   Name = "Remove Invisible Walls🧱",
    Callback = function() TitanLogic.InvisibleWalls() end,
 })
 
@@ -418,7 +413,7 @@ TabTitan:CreateToggle({
 })
 
 TabTitan:CreateToggle({
-   Name = "Background FPS Saver (Arkaplan Modu)",
+   Name = "Background FPS Saver➕",
    CurrentValue = false,
    Flag = "BackFPS",
    Callback = function(Value)
@@ -467,7 +462,7 @@ local TabUtils = Window:CreateTab("Utils", 4483362458)
 TabUtils:CreateSection("Araçlar")
 
 TabUtils:CreateToggle({
-   Name = "No Render (Siyah Ekran - CPU Modu)",
+   Name = "No Render (Siyah Ekran)",
    CurrentValue = false,
    Flag = "NoRender",
    Callback = function(Value) GodLogic.ToggleNoRender(Value) end,
@@ -476,4 +471,12 @@ TabUtils:CreateToggle({
 TabUtils:CreateButton({ Name = "Streamer Mode (İsim Gizle)", Callback = GodLogic.StreamerMode })
 TabUtils:CreateButton({ Name = "Clean Console/Logs", Callback = GodLogic.CleanLogs })
 
-TabUtils:CreateLabel("Script by Kodlama Desteği")
+-- Rayfield'da "Destroy" işlemi kendi içinde yönetilir ama UI'ı kapatmak için bir buton:
+TabUtils:CreateButton({ 
+    Name = "Destroy UI (Kapat)", 
+    Callback = function() 
+        Rayfield:Destroy() 
+    end 
+})
+
+TabUtils:CreateLabel("Script by Zenith")

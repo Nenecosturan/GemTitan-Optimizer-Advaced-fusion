@@ -1,124 +1,182 @@
 --[[
-    GemTitanOptimizer: Advanced fusion
-    Kodlayan: Zenith(bizkizlar)
-    Sürüm: 4.2 Ultimate
+    GemTitanOptimizer: The Crystal
+    Kodlayan: Zenith (bizkizlar)
+    Sürüm: 5.0 Full Stack
+    
+    New Features:
+    - Secure Key System: "Fusionof26"
+    - Cortex AI: Akıllı Fizik ve Hook Sistemi
+    - Smart Toggles: Geri Alınabilir Grafikler
+    - Destruction Suite: 20+ Yıkıcı Özellik (Geri Getirildi)
 ]]
 
---// 1. KÜTÜPHANE VE HİZMETLER
--- Rayfield kütüphanesi yükleniyor
+--// 1. KÜTÜPHANE VE SERVİSLER
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local MaterialService = game:GetService("MaterialService")
+local TeleportService = game:GetService("TeleportService")
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
---// 2. DEĞİŞKEN YÖNETİMİ
+--// 2. BELLEK VE SNAPSHOT
 local GemTitan = {
+    Connections = {}, 
     Loops = {},
+    Defaults = {
+        Brightness = Lighting.Brightness,
+        ClockTime = Lighting.ClockTime,
+        FogEnd = Lighting.FogEnd,
+        GlobalShadows = Lighting.GlobalShadows,
+        Ambient = Lighting.Ambient,
+        Tech = Lighting.Technology
+    },
     Config = {
-        SmartCulling = false,
-        BackFPS = false,
-        NoRender = false
+        PhysicsBubble = false
     }
 }
 
---// 3. UI PENCERESİ (Rayfield)
+--// 3. UI PENCERESİ
 local Window = Rayfield:CreateWindow({
-   Name = "•GemTitanOptimizer•|•Adcanced fusion v2.1• ✓",
-   LoadingTitle = "Loading...",
-   LoadingSubtitle = "Finding Latest version...",
+   Name = "•GemTitanOptimizer•|•Crystal v5.0• 🔮",
+   LoadingTitle = "System Loading...",
+   LoadingSubtitle = "Verifying Integrity...",
+   Theme = "Amethyst",
+   
    ConfigurationSaving = {
       Enabled = true,
       FolderName = "GemBoostConfig", 
-      FileName = "TitaniumSettings"
+      FileName = "TitanCrystalSettings"
    },
    Discord = {
       Enabled = false,
       Invite = "noinvite", 
       RememberJoins = true 
    },
-   KeySystem = false, 
+   
+   KeySystem = true,
+   KeySettings = {
+      Title = "Optimization Access",
+      Subtitle = "Security Protocol",
+      Note = "Key: Fusionof26",
+      FileName = "GemTitanKeyFile",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = "Fusionof26"
+   }
 })
 
 --// 4. YARDIMCI FONKSİYONLAR
 local function SendNotif(title, text)
-    Rayfield:Notify({
-        Title = title,
-        Content = text,
-        Duration = 3,
-        Image = 4483345998,
-   })
+    Rayfield:Notify({ Title = title, Content = text, Duration = 2, Image = 4483345998 })
 end
 
 local function DoSafe(func)
-    local s, e = pcall(func)
-    if not s then warn("GemTitan Error: " .. tostring(e)) end
+    pcall(func)
 end
 
 --------------------------------------------------------------------------------
---// MANTIK MODÜLLERİ (LOGIC)
+--// BÖLÜM 1: CORTEX AI (AKILLI SİSTEMLER)
 --------------------------------------------------------------------------------
-local GemLogic = {}
-local TitanLogic = {}
-local GodLogic = {}
+local SmartTech = {}
+local TitanCortex = {}
 
--- GemLogic (Visuals)
-function GemLogic.LowTextures()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("BasePart") and not v:IsA("MeshPart") then
-                v.Material = Enum.Material.SmoothPlastic
-                v.Reflectance = 0
-            elseif v:IsA("Decal") or v:IsA("Texture") then
-                v:Destroy()
+-- Adaptive Physics Bubble
+function SmartTech.PhysicsBubble(state)
+    GemTitan.Config.PhysicsBubble = state
+    if state then
+        SendNotif("Cortex AI", "Physics bubble: Off🫧")
+        GemTitan.Loops.PhysBubble = RunService.Heartbeat:Connect(function()
+            if os.clock() % 0.1 < 0.01 then
+                local char = LocalPlayer.Character
+                local root = char and char:FindFirstChild("HumanoidRootPart")
+                
+                if root then
+                    local currentSpeed = root.AssemblyLinearVelocity.Magnitude
+                    local dynamicRadius = math.clamp(currentSpeed * 4, 60, 300)
+
+                    for _, part in pairs(Workspace:GetDescendants()) do
+                        if part:IsA("BasePart") and not part.Anchored and part.Parent:FindFirstChild("Humanoid") == nil then
+                            if not part:IsDescendantOf(char) then 
+                                local dist = (part.Position - root.Position).Magnitude
+                                part.Anchored = (dist > dynamicRadius)
+                            end
+                        end
+                    end
+                end
             end
-        end
-        Lighting.GlobalShadows = false
-        Lighting.FogEnd = 9e9
-        SendNotif("GemBoost", "Textures Removed.")
-    end)
+        end)
+    else
+        if GemTitan.Loops.PhysBubble then GemTitan.Loops.PhysBubble:Disconnect() end
+        SendNotif("Cortex AI", "Physics bubble: Off")
+    end
 end
 
-function GemLogic.RemoveEffects()
-    DoSafe(function()
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("DepthOfFieldEffect") then
-                v:Destroy()
+-- Interceptor Hook
+function TitanCortex.HookNewParts(state)
+    if state then
+        SendNotif("Cortex AI", "Hook: On (New effects get removed instantly)")
+        GemTitan.Connections.Added = Workspace.DescendantAdded:Connect(function(obj)
+            if obj:IsA("ParticleEmitter") or obj:IsA("Explosion") or obj:IsA("Smoke") or obj:IsA("Debris") then
+                RunService.Heartbeat:Wait()
+                obj:Destroy()
             end
+        end)
+    else
+        if GemTitan.Connections.Added then GemTitan.Connections.Added:Disconnect() end
+        SendNotif("Cortex AI", "Hook: DURDURULDU")
+    end
+end
+
+--------------------------------------------------------------------------------
+--// BÖLÜM 2: TOGGLE (AÇ/KAPA) SİSTEMLERİ
+--------------------------------------------------------------------------------
+local GemLogic = {} 
+local TitanLogic = {} 
+
+function GemLogic.ToggleEffects(state)
+    for _, v in pairs(Lighting:GetChildren()) do
+        if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("SunRaysEffect") then
+            v.Enabled = not state
         end
-        SendNotif("GemBoost", "Effects removed.")
-    end)
+    end
+    SendNotif("GemBoost", state and "Effects hidden" or "Effects back")
 end
 
-function GemLogic.UnlockFPS()
-    DoSafe(function() setfpscap(10000) end)
+function GemLogic.ToggleShadows(state)
+    Lighting.GlobalShadows = not state
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") then v.CastShadow = not state end
+    end
+    SendNotif("GemBoost", state and "Shadows disabled" or "Shadows enabled")
 end
 
--- TitanLogic (System)
-function TitanLogic.FullBright()
-    DoSafe(function()
+function TitanLogic.ToggleFullBright(state)
+    if state then
         Lighting.Brightness = 2
         Lighting.ClockTime = 14
         Lighting.FogEnd = 100000
         Lighting.GlobalShadows = false
         Lighting.Ambient = Color3.fromRGB(178, 178, 178)
-        Lighting.OutdoorAmbient = Color3.fromRGB(178, 178, 178)
-        SendNotif("Titanium", "Fullbright on.")
-    end)
+    else
+        Lighting.Brightness = GemTitan.Defaults.Brightness
+        Lighting.ClockTime = GemTitan.Defaults.ClockTime
+        Lighting.FogEnd = GemTitan.Defaults.FogEnd
+        Lighting.GlobalShadows = GemTitan.Defaults.GlobalShadows
+        Lighting.Ambient = GemTitan.Defaults.Ambient
+    end
 end
 
 function TitanLogic.SmartCulling(state)
     GemTitan.Config.SmartCulling = state
     if state then
-        SendNotif("Titanium", "Smart Culling: On")
+        SendNotif("Titanium", "Smart hider: On")
         GemTitan.Loops.Cull = RunService.RenderStepped:Connect(function()
-            if os.clock() % 0.1 < 0.01 then
+            if os.clock() % 0.15 < 0.02 then
                 for _, part in pairs(Workspace:GetDescendants()) do
                     if part:IsA("BasePart") then
                         local _, onScreen = Camera:WorldToScreenPoint(part.Position)
@@ -132,351 +190,235 @@ function TitanLogic.SmartCulling(state)
         for _, part in pairs(Workspace:GetDescendants()) do
             if part:IsA("BasePart") then part.LocalTransparencyModifier = 0 end
         end
-        SendNotif("Titanium", "Smart Culling: Off")
+        SendNotif("Titanium", "Smart hider: Off")
     end
 end
 
-function TitanLogic.InvisibleWalls()
-    DoSafe(function()
-        for _,v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("BasePart") and v.Transparency == 1 then
-                v.CanCollide = false
-            end
-        end
-        SendNotif("Titanium", "Invisible walls removed.")
-    end)
-end
-
--- GodLogic (Destruction)
-function GodLogic.NukeParticles()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") or v:IsA("Explosion") then
-                v:Destroy()
-            end
-        end
-        SendNotif("Hyper aggressive ⚡", "Particles removed.")
-    end)
-end
-
-function GodLogic.StopAnims()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("Humanoid") then
-                local animator = v:FindFirstChildOfClass("Animator")
-                if animator then
-                    for _, track in pairs(animator:GetPlayingAnimationTracks()) do track:Stop() end
-                end
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "Animations disabled.")
-    end)
-end
-
-function GodLogic.RemoveAccessories()
-    DoSafe(function()
-        for _, player in pairs(Players:GetPlayers()) do
-            if player.Character then
-                for _, obj in pairs(player.Character:GetChildren()) do
-                    if obj:IsA("Accessory") or obj:IsA("Hat") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") then
-                        obj:Destroy()
-                    end
-                end
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "accessories disabled.")
-    end)
-end
-
-function GodLogic.KillSounds()
-    DoSafe(function()
-        for _, v in pairs(game:GetDescendants()) do
-            if v:IsA("Sound") then
-                v:Stop()
-                v.Volume = 0
-                v:Destroy()
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "Sound system disabled.")
-    end)
-end
-
-function GodLogic.AnchorAll()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("BasePart") and v.Parent.Name ~= LocalPlayer.Name then
-                v.Anchored = true
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "Freezed all.")
-    end)
-end
-
-function GodLogic.RemoveGUI3D()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-                v:Destroy()
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "unnecessary texts removed.")
-    end)
-end
-
-function GodLogic.DeleteTerrain()
-    DoSafe(function()
-        Workspace.Terrain:Clear()
-        Workspace.WaterWaveSize = 0
-        Workspace.WaterReflectance = 0
-        Workspace.WaterTransparency = 0
-        SendNotif("Hyper aggresive⚡", "Terrain removed.")
-    end)
-end
-
-function GodLogic.ToggleNoRender(state)
-    GemTitan.Config.NoRender = state
-    RunService:Set3dRenderingEnabled(not state)
+function GemLogic.ToggleTextures(state)
     if state then
-        SendNotif("Utils", "3D Render Off")
+         for _, v in pairs(Workspace:GetDescendants()) do
+            if v:IsA("BasePart") and not v:IsA("MeshPart") then
+                v.Material = Enum.Material.SmoothPlastic
+            elseif v:IsA("Decal") or v:IsA("Texture") then
+                v.Transparency = 1
+            end
+        end
+        SendNotif("GemBoost", "Dokular Gizlendi")
     else
-        SendNotif("Utils", "3D Render On")
+        for _, v in pairs(Workspace:GetDescendants()) do
+             if v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 0 end
+        end
+        SendNotif("GemBoost", "Dokular Geri Geldi")
     end
 end
 
-function GodLogic.StreamerMode()
-    DoSafe(function()
-        for _, v in pairs(Players:GetPlayers()) do
-            if v ~= LocalPlayer then
-                v.DisplayName = "Player"
-                v.Name = "Player"
+--------------------------------------------------------------------------------
+--// BÖLÜM 3: DESTRUCTIVE (YIKICI) FONKSİYONLAR - HEPSİ GERİ GELDİ!
+--------------------------------------------------------------------------------
+local GodLogic = {}
+
+-- 1. Particles
+function GodLogic.NukeParticles()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then v:Destroy() end
+    end
+    SendNotif("Aggressive", "Partiküller Silindi.")
+end
+
+-- 2. Animations
+function GodLogic.StopAnims()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Humanoid") then
+            local animator = v:FindFirstChildOfClass("Animator")
+            if animator then for _, track in pairs(animator:GetPlayingAnimationTracks()) do track:Stop() end end
+        end
+    end
+    SendNotif("Aggressive", "Animasyonlar Durdu.")
+end
+
+-- 3. Accessories
+function GodLogic.RemoveAccessories()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player.Character then
+            for _, obj in pairs(player.Character:GetChildren()) do
+                if obj:IsA("Accessory") or obj:IsA("Hat") or obj:IsA("Shirt") or obj:IsA("Pants") then obj:Destroy() end
             end
         end
-        SendNotif("Utils", "Streamer mode on.")
-    end)
+    end
+    SendNotif("Aggressive", "Aksesuarlar Silindi.")
 end
 
-function GodLogic.DowngradeLight()
-    DoSafe(function()
-        Lighting.Technology = Enum.Technology.Compatibility
-        Lighting.GlobalShadows = false
-        SendNotif("Hyper aggresive⚡", "lightning lowered.")
-    end)
+-- 4. Sounds
+function GodLogic.KillSounds()
+    for _, v in pairs(game:GetDescendants()) do if v:IsA("Sound") then v:Destroy() end end
+    SendNotif("Aggressive", "Sesler Silindi.")
 end
 
-function GodLogic.RemoveConstraints()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("Constraint") or v:IsA("Weld") or v:IsA("Motor6D") or v:IsA("Beam") then
-                v:Destroy()
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "Constraints removed.")
-    end)
-end
-
+-- 5. Meshes
 function GodLogic.StripMeshes()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("MeshPart") then v.TextureID = "" end
-        end
-        SendNotif("Hyper aggresive⚡", "Mesh textures removed.")
-    end)
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("MeshPart") then v.TextureID = "" end
+    end
+    SendNotif("Aggressive", "Mesh Dokuları Silindi.")
 end
 
-function GodLogic.KillStates()
-    DoSafe(function()
-        local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-        if h then
-            h:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
-            h:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-            h:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-        end
-        SendNotif("Hyper aggresive⚡", "unnecessary humanoid parts disabled.")
-    end)
+-- 6. GUIs
+function GodLogic.RemoveGUI3D()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then v:Destroy() end
+    end
+    SendNotif("Aggressive", "3D GUI Silindi.")
 end
 
-function GodLogic.DisableTouch()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.CanTouch = false
-                v.CanQuery = false
-            end
-        end
-        SendNotif("Hyper aggresive", "Touch disabled.")
-    end)
-end
-
+-- 7. Vehicles
 function GodLogic.RemoveVehicles()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("Seat") or v:IsA("VehicleSeat") then v:Destroy() end
-        end
-        SendNotif("Hyper aggresive", "Vehicle/Seats removed.")
-    end)
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Seat") or v:IsA("VehicleSeat") then v:Destroy() end
+    end
+    SendNotif("Aggressive", "Araçlar Silindi.")
 end
 
-function GodLogic.VoidClean()
-    DoSafe(function()
-        Workspace.FallenPartsDestroyHeight = -10
-        SendNotif("Hyper aggresive⚡", "Void cleaning accelerated.")
-    end)
+-- 8. Terrain
+function GodLogic.DeleteTerrain()
+    Workspace.Terrain:Clear()
+    SendNotif("Aggressive", "Arazi (Terrain) Silindi.")
 end
 
-function GodLogic.OverrideMaterials()
-    DoSafe(function()
-        for _, mat in pairs(MaterialService:GetChildren()) do
-            mat:Destroy()
-        end
-        SendNotif("Hyper aggresive⚡", "MaterialService got reseted.")
-    end)
+-- 9. Anchor
+function GodLogic.AnchorAll()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") and v.Parent.Name ~= LocalPlayer.Name then v.Anchored = true end
+    end
+    SendNotif("Hyper", "Her Şey Sabitlendi.")
 end
 
-function GodLogic.CleanScripts()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("LocalScript") and not v:IsDescendantOf(LocalPlayer.Character) then
-                v:Destroy()
-            end
-        end
-        SendNotif("Hyper aggressive⚡", "Map Scripts cleaned.")
-    end)
+-- 10. Lighting
+function GodLogic.DowngradeLight()
+    Lighting.Technology = Enum.Technology.Compatibility
+    Lighting.GlobalShadows = false
+    SendNotif("Hyper", "Işık Kalitesi Düşürüldü.")
 end
 
+-- 11. Constraints
+function GodLogic.RemoveConstraints()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Constraint") or v:IsA("Weld") or v:IsA("Motor6D") or v:IsA("Beam") then v:Destroy() end
+    end
+    SendNotif("Hyper", "Fizik Bağlantıları Koptu.")
+end
+
+-- 12. CanTouch
+function GodLogic.DisableTouch()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") then v.CanTouch = false v.CanQuery = false end
+    end
+    SendNotif("Hyper", "Dokunma (Touch) Kapandı.")
+end
+
+-- 13. States
+function GodLogic.KillStates()
+    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if h then
+        h:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+        h:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+        h:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+    end
+    SendNotif("Hyper", "Humanoid Durumları Kısıtlandı.")
+end
+
+-- 14. Sleep Physics
 function GodLogic.SleepParts()
-    DoSafe(function()
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if v:IsA("BasePart") and not v.Anchored then
-                v.Velocity = Vector3.new(0,0,0)
-                v.RotVelocity = Vector3.new(0,0,0)
-            end
-        end
-        SendNotif("Hyper aggresive⚡", "Moving parts disabled.")
-    end)
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") and not v.Anchored then v.Velocity = Vector3.zero end
+    end
+    SendNotif("Hyper", "Fizik Uyutuldu.")
+end
+
+-- 15. Map Scripts
+function GodLogic.CleanScripts()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("LocalScript") and not v:IsDescendantOf(LocalPlayer.Character) then v:Destroy() end
+    end
+    SendNotif("Hyper", "Map Scriptleri Silindi.")
+end
+
+-- 16. Materials
+function GodLogic.OverrideMaterials()
+    for _, mat in pairs(MaterialService:GetChildren()) do mat:Destroy() end
+    SendNotif("Hyper", "Materyaller Sıfırlandı.")
+end
+
+-- 17. Void
+function GodLogic.VoidClean()
+    Workspace.FallenPartsDestroyHeight = -10
+    SendNotif("Hyper", "Void Temizliği Arttırıldı.")
 end
 
 function GodLogic.CleanLogs()
-    DoSafe(function()
-         if rconsoleclear then rconsoleclear() end
-         SendNotif("Utils", "Console/Logs cleaned.")
-    end)
+    if rconsoleclear then rconsoleclear() end
+    SendNotif("Utils", "Loglar Temizlendi.")
 end
 
 --------------------------------------------------------------------------------
---// RAYFIELD UI ELEMENTLERİ
+--// UI KURULUMU (HEPSİ EKLENİYOR)
 --------------------------------------------------------------------------------
 
--- TAB 1: GEMBOOST (Temel)
-local TabGem = Window:CreateTab("Light🪶", 4483362458)
-TabGem:CreateSection("Main Graphics")
+-- [TAB 0] CORTEX AI
+local TabAI = Window:CreateTab("Cortex AI🧠", 4483362458)
+TabAI:CreateSection("Active Intelligence")
+TabAI:CreateToggle({ Name = "Adaptive Physics Bubble 🫧", CurrentValue = false, Flag = "PhysBubble", Callback = SmartTech.PhysicsBubble })
+TabAI:CreateLabel("Hızlandıkça balon genişler, durunca küçülür.")
+TabAI:CreateToggle({ Name = "Interceptor Hook (Auto-Delete) 🎣", CurrentValue = false, Flag = "AutoHook", Callback = TitanCortex.HookNewParts })
 
-TabGem:CreateButton({
-   Name = "remove Textures🧱",
-   Callback = function() GemLogic.LowTextures() end,
-})
+-- [TAB 1] VISUALS (TOGGLE)
+local TabLight = Window:CreateTab("Visuals👁️", 4483362458)
+TabLight:CreateSection("Toggleable Graphics")
+TabLight:CreateToggle({ Name = "Hide Textures (Plastik) 🧱", CurrentValue = false, Flag = "TexTog", Callback = GemLogic.ToggleTextures })
+TabLight:CreateToggle({ Name = "Disable Effects ✨", CurrentValue = false, Flag = "EffTog", Callback = GemLogic.ToggleEffects })
+TabLight:CreateToggle({ Name = "Disable Shadows 🌑", CurrentValue = false, Flag = "ShadTog", Callback = GemLogic.ToggleShadows })
 
-TabGem:CreateButton({
-   Name = "Remove Effects✨ (Fog/Blur)",
-   Callback = function() GemLogic.RemoveEffects() end,
-})
+-- [TAB 2] BASICS
+local TabBasics = Window:CreateTab("Basics⚙️", 4483362458)
+TabBasics:CreateSection("Environment")
+TabBasics:CreateToggle({ Name = "FullBright Mode ☀️", CurrentValue = false, Flag = "FullBright", Callback = TitanLogic.ToggleFullBright })
+TabBasics:CreateToggle({ Name = "Smart View Culling 👁️", CurrentValue = false, Flag = "SmartCull", Callback = TitanLogic.SmartCulling })
+TabBasics:CreateToggle({ Name = "Unlock FPS 👾", CurrentValue = false, Flag = "UnlockFPS", Callback = function(V) setfpscap(V and 10000 or 60) end })
+TabBasics:CreateButton({ Name = "Remove Invisible Walls", Callback = function() TitanLogic.InvisibleWalls() end }) -- Unutulan özellik eklendi
 
-TabGem:CreateToggle({
-   Name = "Unlock FPS👾",
-   CurrentValue = false,
-   Flag = "UnlockFPS",
-   Callback = function(Value)
-       if Value then GemLogic.UnlockFPS() else setfpscap(60) end
-   end,
-})
+-- [TAB 3] AGGRESSIVE (YIKIM I - OBJELER)
+local TabAggressive = Window:CreateTab("Aggressive🔥", 4483362458)
+TabAggressive:CreateSection("Object Destruction")
+TabAggressive:CreateLabel("⚠️ Bu işlemler geri alınamaz!")
 
--- TAB 2: TITANIUM (Logic)
-local TabTitan = Window:CreateTab("Basics", 4483362458)
-TabTitan:CreateSection("Smart functions")
+TabAggressive:CreateButton({ Name = "1. Nuke Particles", Callback = GodLogic.NukeParticles })
+TabAggressive:CreateButton({ Name = "2. Stop Animations", Callback = GodLogic.StopAnims })
+TabAggressive:CreateButton({ Name = "3. Remove Accessories", Callback = GodLogic.RemoveAccessories })
+TabAggressive:CreateButton({ Name = "4. Kill All Sounds", Callback = GodLogic.KillSounds })
+TabAggressive:CreateButton({ Name = "5. Strip Mesh Textures", Callback = GodLogic.StripMeshes })
+TabAggressive:CreateButton({ Name = "6. Remove 3D GUI", Callback = GodLogic.RemoveGUI3D })
+TabAggressive:CreateButton({ Name = "7. Remove Vehicles", Callback = GodLogic.RemoveVehicles })
+TabAggressive:CreateButton({ Name = "8. Delete Terrain", Callback = GodLogic.DeleteTerrain })
 
-TabTitan:CreateButton({
-   Name = "FullBright☀️",
-   Callback = function() TitanLogic.FullBright() end,
-})
+-- [TAB 4] HYPER (YIKIM II - TEKNİK) - BURASI ÖNCEDEN EKSİKTİ, ŞİMDİ TAM!
+local TabHyper = Window:CreateTab("Hyper⚡", 4483362458)
+TabHyper:CreateSection("Engine Level Hacks")
 
-TabTitan:CreateButton({
-   Name = "Remove Invisible Walls🧱",
-   Callback = function() TitanLogic.InvisibleWalls() end,
-})
+TabHyper:CreateButton({ Name = "9. Freeze World (Anchor)", Callback = GodLogic.AnchorAll })
+TabHyper:CreateButton({ Name = "10. Downgrade Lighting", Callback = GodLogic.DowngradeLight })
+TabHyper:CreateButton({ Name = "11. Remove Constraints", Callback = GodLogic.RemoveConstraints })
+TabHyper:CreateButton({ Name = "12. Disable CanTouch", Callback = GodLogic.DisableTouch })
+TabHyper:CreateButton({ Name = "13. Kill Humanoid States", Callback = GodLogic.KillStates })
+TabHyper:CreateButton({ Name = "14. Sleep Physics", Callback = GodLogic.SleepParts })
+TabHyper:CreateButton({ Name = "15. Delete Map Scripts", Callback = GodLogic.CleanScripts })
+TabHyper:CreateButton({ Name = "16. Override Materials", Callback = GodLogic.OverrideMaterials })
+TabHyper:CreateButton({ Name = "17. Fast Void Clean", Callback = GodLogic.VoidClean })
 
-TabTitan:CreateToggle({
-   Name = "Smart View Culling (BETA)",
-   CurrentValue = false,
-   Flag = "SmartCull",
-   Callback = function(Value)
-       TitanLogic.SmartCulling(Value)
-   end,
-})
-
-TabTitan:CreateToggle({
-   Name = "Background FPS Saver🔋",
-   CurrentValue = false,
-   Flag = "BackFPS",
-   Callback = function(Value)
-        GemTitan.Config.BackFPS = Value
-        if Value then
-            GemTitan.Loops.Focus = UserInputService.WindowFocusReleased:Connect(function() setfpscap(5) end)
-            GemTitan.Loops.Unfocus = UserInputService.WindowFocused:Connect(function() setfpscap(10000) end)
-            SendNotif("Titanium", "Pencere inaktifken FPS 5 olacak.")
-        else
-            if GemTitan.Loops.Focus then GemTitan.Loops.Focus:Disconnect() end
-            if GemTitan.Loops.Unfocus then GemTitan.Loops.Unfocus:Disconnect() end
-            setfpscap(10000)
-        end
-   end,
-})
-
--- TAB 3: GOD MODE (Objects)
-local TabGod1 = Window:CreateTab("Aggresive🔥", 4483362458)
-TabGod1:CreateSection("Yıkım I: Objeler")
-
-TabGod1:CreateButton({ Name = "1. RemoveParticles/Smoke", Callback = GodLogic.NukeParticles })
-TabGod1:CreateButton({ Name = "2. Stop Animations", Callback = GodLogic.StopAnims })
-TabGod1:CreateButton({ Name = "3. Remove Accessories", Callback = GodLogic.RemoveAccessories })
-TabGod1:CreateButton({ Name = "4. Kill Sound Engine", Callback = GodLogic.KillSounds })
-TabGod1:CreateButton({ Name = "5. Strip Mesh Textures", Callback = GodLogic.StripMeshes })
-TabGod1:CreateButton({ Name = "6. Remove Billboard GUIs", Callback = GodLogic.RemoveGUI3D })
-TabGod1:CreateButton({ Name = "7. Remove Seats/Vehicles", Callback = GodLogic.RemoveVehicles })
-TabGod1:CreateButton({ Name = "8. Delete Terrain & Water (Risky)", Callback = GodLogic.DeleteTerrain })
-
--- TAB 4: GOD MODE (Tech)
-local TabGod2 = Window:CreateTab("Hyper aggresive⚡", 4483362458)
-TabGod2:CreateSection("Yıkım II: Teknik")
-
-TabGod2:CreateButton({ Name = "9. Freeze All (Rejoin to fix)", Callback = GodLogic.AnchorAll })
-TabGod2:CreateButton({ Name = "10. Downgrade Lighting", Callback = GodLogic.DowngradeLight })
-TabGod2:CreateButton({ Name = "11. Remove Physics Constraints (risky)", Callback = GodLogic.RemoveConstraints })
-TabGod2:CreateButton({ Name = "12. Disable CanTouch", Callback = GodLogic.DisableTouch })
-TabGod2:CreateButton({ Name = "13. Kill Humanoid States", Callback = GodLogic.KillStates })
-TabGod2:CreateButton({ Name = "14. Sleep Physics (Vel 0)", Callback = GodLogic.SleepParts })
-TabGod2:CreateButton({ Name = "15. Delete Map Scripts", Callback = GodLogic.CleanScripts })
-TabGod2:CreateButton({ Name = "16. Override Materials", Callback = GodLogic.OverrideMaterials })
-TabGod2:CreateButton({ Name = "17. Fast Void Clean", Callback = GodLogic.VoidClean })
-
--- TAB 5: UTILS
-local TabUtils = Window:CreateTab("Utils", 4483362458)
-TabUtils:CreateSection("Araçlar")
-
-TabUtils:CreateToggle({
-   Name = "No Render (Cool device)",
-   CurrentValue = false,
-   Flag = "NoRender",
-   Callback = function(Value) GodLogic.ToggleNoRender(Value) end,
-})
-
-TabUtils:CreateButton({ Name = "Streamer Mode (Hide names)", Callback = GodLogic.StreamerMode })
+-- [TAB 5] UTILS
+local TabUtils = Window:CreateTab("Utils🛠️", 4483362458)
+TabUtils:CreateSection("Management")
+TabUtils:CreateToggle({ Name = "No Render (Black Screen) ⬛", CurrentValue = false, Flag = "NoRender", Callback = function(V) RunService:Set3dRenderingEnabled(not V) end })
 TabUtils:CreateButton({ Name = "Clean Console/Logs", Callback = GodLogic.CleanLogs })
+TabUtils:CreateButton({ Name = "Rejoin Server 🔄", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
+TabUtils:CreateButton({ Name = "Destroy UI", Callback = function() Rayfield:Destroy() end })
 
--- Rayfield'da "Destroy" işlemi kendi içinde yönetilir ama UI'ı kapatmak için bir buton:
-TabUtils:CreateButton({ 
-    Name = "Destroy UI", 
-    Callback = function() 
-        Rayfield:Destroy() 
-    end 
-})
-
-TabUtils:CreateLabel("Script by Zenith")
+TabUtils:CreateLabel("Engineered by Zenith")

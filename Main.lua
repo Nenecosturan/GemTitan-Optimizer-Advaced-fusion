@@ -1,4 +1,3 @@
-l.")
 --[[
     GemTitan: TITAN EDITION (Rayfield Fusion)
     Kodlayan: Kodlama Desteği (AI)

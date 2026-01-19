@@ -30,13 +30,13 @@ local GemTitan = {
 
 --// 3. UI PENCERESİ (Rayfield)
 local Window = Rayfield:CreateWindow({
-   Name = "GemTitan: TITAN EDITION",
+   Name = "GemTitanOptimizer:Adcanced fusion",
    LoadingTitle = "Yükleniyor...",
-   LoadingSubtitle = "GemTitan Ultimate",
+   LoadingSubtitle = "GemTitanOptimizer loading...",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "GemTitanConfig", 
-      FileName = "TitanSettings"
+      FolderName = "GemBoostConfig", 
+      FileName = "TitaniumSettings"
    },
    Discord = {
       Enabled = false,

@@ -1,12 +1,12 @@
 --[[
     GemTitan | OMEGA
     Coder: Zenith (bizkizlar)
-    Version: v7.0 (Final Build)
+    Version: v7.0 (Crystal Build)
     
     Notes:
-    - Clean naming convention.
-    - All advanced features included (Neon, AI, Drag FPS).
-    - English Localization.
+    - Key changed to "Crystal".
+    - High-End Optimization Logic.
+    - Neon UI & AI Systems active.
 ]]
 
 --// 1. LIBRARIES AND SERVICES
@@ -40,7 +40,7 @@ local GemTitan = {
     }
 }
 
---// 3. NEON GLOW INJECTOR
+--// 3. NEON GLOW INJECTOR (PREMIUM VISUALS)
 task.spawn(function()
     task.wait(1) 
     local function AddGlow(instance)
@@ -48,13 +48,14 @@ task.spawn(function()
         if instance:FindFirstChild("ZenithGlow") then return end
         
         local Glow = Instance.new("UIStroke")
-        Glow.Name = "Amethyst"
+        Glow.Name = "ZenithGlow"
         Glow.Parent = instance
         Glow.Color = Color3.fromRGB(170, 0, 255) -- Purple Neon
         Glow.Thickness = 2.5
         Glow.Transparency = 0.2
         Glow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         
+        -- Breathing Animation
         local TweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
         local Tween = TweenService:Create(Glow, TweenInfo, {Transparency = 0.6})
         Tween:Play()
@@ -71,11 +72,11 @@ task.spawn(function()
     end
 end)
 
---// 4. UI WINDOW (CLEAN NAME)
+--// 4. UI WINDOW (KEY: CRYSTAL)
 local Window = Rayfield:CreateWindow({
-   Name = "•GemTitanOptimizer •|• OMEGA v7.0•", -- Requested Clean Name
-   LoadingTitle = "GemTitan is loading",
-   LoadingSubtitle = "Finding the latest version...", -- Clean subtitle
+   Name = "GemTitan | OMEGA v7.5",
+   LoadingTitle = "GemTitan Loading...",
+   LoadingSubtitle = "Finding latest version...",
    Theme = "Amethyst",
    
    ConfigurationSaving = {
@@ -88,13 +89,13 @@ local Window = Rayfield:CreateWindow({
    
    KeySystem = true,
    KeySettings = {
-      Title = "Optimization Key Access",
+      Title = "Optimization Access",
       Subtitle = "Security Protocol",
-      Note = "get yout key from discord:gojonunyaragi,tiktok:syroxtech1",
-      FileName = "GemTitanKeyFile",
+      Note = "The key is Crystal", -- GÜNCELLENDİ
+      FileName = "GemTitanKeyFile_Crystal", -- Dosya adı çakışmasın diye değiştirdim
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = "Crystal"
+      Key = "Crystal" -- YENİ KEY
    }
 })
 
@@ -109,7 +110,7 @@ local function ToggleFPSCounter(state)
     if state then
         if FPSGui then FPSGui:Destroy() end
         FPSGui = Instance.new("ScreenGui")
-        FPSGui.Name = "FPS Monitor"
+        FPSGui.Name = "GemTitanFPS"
         FPSGui.Parent = CoreGui
         
         local Frame = Instance.new("Frame")
@@ -199,7 +200,7 @@ local TitanCortex = {}
 function SmartTech.PhysicsBubble(state)
     GemTitan.Config.PhysicsBubble = state
     if state then
-        SendNotif("Cortex AI", "Dynamic Physics Bubble: ACTIVE 🫧")
+        SendNotif("Omega AI", "Dynamic Physics Bubble: ACTIVE 🫧")
         GemTitan.Loops.PhysBubble = RunService.Heartbeat:Connect(function()
             if os.clock() % 0.1 < 0.01 then
                 local char = LocalPlayer.Character
@@ -220,13 +221,13 @@ function SmartTech.PhysicsBubble(state)
         end)
     else
         if GemTitan.Loops.PhysBubble then GemTitan.Loops.PhysBubble:Disconnect() end
-        SendNotif("Cortex AI", "Physics Bubble: DISABLED")
+        SendNotif("Omega AI", "Physics Bubble: DISABLED")
     end
 end
 
 function TitanCortex.HookNewParts(state)
     if state then
-        SendNotif("Cortex AI", "Hook: ACTIVE (Blocking New Effects)")
+        SendNotif("Omega AI", "Hook: ACTIVE (Blocking New Effects)")
         GemTitan.Connections.Added = Workspace.DescendantAdded:Connect(function(obj)
             if obj:IsA("ParticleEmitter") or obj:IsA("Explosion") or obj:IsA("Smoke") or obj:IsA("Debris") then
                 RunService.Heartbeat:Wait()
@@ -235,7 +236,7 @@ function TitanCortex.HookNewParts(state)
         end)
     else
         if GemTitan.Connections.Added then GemTitan.Connections.Added:Disconnect() end
-        SendNotif("Cortex AI", "Hook: STOPPED")
+        SendNotif("Omega AI", "Hook: STOPPED")
     end
 end
 
@@ -327,7 +328,7 @@ function GodLogic.CleanLogs() if rconsoleclear then rconsoleclear() end SendNoti
 --------------------------------------------------------------------------------
 
 -- [TAB 0] CORTEX AI
-local TabAI = Window:CreateTab("Cortex AI🧠", 4483362458)
+local TabAI = Window:CreateTab("Omega AI🧠", 4483362458)
 TabAI:CreateSection("Active Intelligence")
 TabAI:CreateToggle({ Name = "Adaptive Physics Bubble 🫧", CurrentValue = false, Flag = "PhysBubble", Callback = SmartTech.PhysicsBubble })
 TabAI:CreateLabel("Bubble expands with speed, shrinks when stopped.")
@@ -363,22 +364,22 @@ TabAggressive:CreateButton({ Name = "8. Delete Terrain", Callback = GodLogic.Del
 -- [TAB 4] HYPER
 local TabHyper = Window:CreateTab("Hyper⚡", 4483362458)
 TabHyper:CreateSection("Engine Hacks")
-TabHyper:CreateButton({ Name = "9. Freeze World (Anchor)", Callback = GodLogic.AnchorAll })
-TabHyper:CreateButton({ Name = "10. Downgrade Lighting", Callback = GodLogic.DowngradeLight })
-TabHyper:CreateButton({ Name = "11. Remove Constraints", Callback = GodLogic.RemoveConstraints })
-TabHyper:CreateButton({ Name = "12. Disable CanTouch", Callback = GodLogic.DisableTouch })
-TabHyper:CreateButton({ Name = "13. Kill Humanoid States", Callback = GodLogic.KillStates })
-TabHyper:CreateButton({ Name = "14. Sleep Physics", Callback = GodLogic.SleepParts })
-TabHyper:CreateButton({ Name = "15. Delete Map Scripts", Callback = GodLogic.CleanScripts })
-TabHyper:CreateButton({ Name = "16. Override Materials", Callback = GodLogic.OverrideMaterials })
-TabHyper:CreateButton({ Name = "17. Fast Void Clean", Callback = GodLogic.VoidClean })
+TabHyper:CreateButton({ Name = "1. Freeze World (Anchor)", Callback = GodLogic.AnchorAll })
+TabHyper:CreateButton({ Name = "2. Downgrade Lighting", Callback = GodLogic.DowngradeLight })
+TabHyper:CreateButton({ Name = "3. Remove Constraints", Callback = GodLogic.RemoveConstraints })
+TabHyper:CreateButton({ Name = "4. Disable CanTouch", Callback = GodLogic.DisableTouch })
+TabHyper:CreateButton({ Name = "5. Kill Humanoid States", Callback = GodLogic.KillStates })
+TabHyper:CreateButton({ Name = "6. Sleep Physics", Callback = GodLogic.SleepParts })
+TabHyper:CreateButton({ Name = "7. Delete Map Scripts", Callback = GodLogic.CleanScripts })
+TabHyper:CreateButton({ Name = "8. Override Materials", Callback = GodLogic.OverrideMaterials })
+TabHyper:CreateButton({ Name = "9. Fast Void Clean", Callback = GodLogic.VoidClean })
 
 -- [TAB 5] ALTERNATIVES
 local TabAlt = Window:CreateTab("Scripts📂", 4483362458)
 TabAlt:CreateSection("Legacy & Modules")
 TabAlt:CreateLabel("Zenith's other projects.")
 TabAlt:CreateButton({
-    Name = "1.▶ Titanium Optimizer Gen2 (AI) (mostly recommended)",
+    Name = "1.▶ Titanium Optimizer Gen2 AI (highly recommended)",
     Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/Titanium-Optimizer-Gen2-AI/main/Main.lua"))() end,
 })
 TabAlt:CreateButton({
@@ -389,10 +390,10 @@ TabAlt:CreateButton({
 -- [TAB 6] UTILS
 local TabUtils = Window:CreateTab("Utils🛠️", 4483362458)
 TabUtils:CreateSection("Management")
-TabUtils:CreateToggle({ Name = "FPS HUD🖥️", CurrentValue = false, Flag = "DynFPS", Callback = ToggleFPSCounter })
-TabUtils:CreateToggle({ Name = "No Render (cooldown device) ⬛", CurrentValue = false, Flag = "NoRender", Callback = function(V) RunService:Set3dRenderingEnabled(not V) end })
+TabUtils:CreateToggle({ Name = "FPSMonitor 🖥️ ", CurrentValue = false, Flag = "DynFPS", Callback = ToggleFPSCounter })
+TabUtils:CreateToggle({ Name = "No Render (cooldown device)", CurrentValue = false, Flag = "NoRender", Callback = function(V) RunService:Set3dRenderingEnabled(not V) end })
 TabUtils:CreateButton({ Name = "Clean Console/Logs 🧹", Callback = GodLogic.CleanLogs })
 TabUtils:CreateButton({ Name = "Rejoin Server 🔄", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
 TabUtils:CreateButton({ Name = "Destroy UI ⛔", Callback = function() Rayfield:Destroy() end })
 
-TabUtils:CreateLabel("Script by Zenith")
+TabUtils:CreateLabel("Engineered by Zenith")

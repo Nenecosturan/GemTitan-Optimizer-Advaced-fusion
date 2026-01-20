@@ -1,28 +1,29 @@
 --[[
-    GemTitanOptimizer: Ultimate Crystal
-    Kodlayan: Zenith (bizkizlar)
-    Sürüm: 6.0
+    GemTitan | OMEGA
+    Coder: Zenith (bizkizlar)
+    Version: v7.0 (Final Build)
     
-    ÖZELLİKLER:
-    - Secure Key: "Fusionof26"
-    - Cortex AI & Physics Bubble
-    - Alternatives Tab (Legacy Scripts)
-    - Dynamic FPS Counter & Config System
+    Notes:
+    - Clean naming convention.
+    - All advanced features included (Neon, AI, Drag FPS).
+    - English Localization.
 ]]
 
---// 1. KÜTÜPHANE VE SERVİSLER
+--// 1. LIBRARIES AND SERVICES
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
 local TeleportService = game:GetService("TeleportService")
+local TweenService = game:GetService("TweenService") 
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
---// 2. BELLEK VE SNAPSHOT
+--// 2. MEMORY AND SNAPSHOT
 local GemTitan = {
     Connections = {}, 
     Loops = {},
@@ -39,14 +40,44 @@ local GemTitan = {
     }
 }
 
---// 3. UI PENCERESİ (CONFIG KAYDETME AKTİF)
+--// 3. NEON GLOW INJECTOR
+task.spawn(function()
+    task.wait(1) 
+    local function AddGlow(instance)
+        if not instance then return end
+        if instance:FindFirstChild("ZenithGlow") then return end
+        
+        local Glow = Instance.new("UIStroke")
+        Glow.Name = "Amethyst"
+        Glow.Parent = instance
+        Glow.Color = Color3.fromRGB(170, 0, 255) -- Purple Neon
+        Glow.Thickness = 2.5
+        Glow.Transparency = 0.2
+        Glow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        
+        local TweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+        local Tween = TweenService:Create(Glow, TweenInfo, {Transparency = 0.6})
+        Tween:Play()
+    end
+
+    for _, gui in pairs(CoreGui:GetChildren()) do
+        if gui.Name == "Rayfield" then
+            local Main = gui:FindFirstChild("Main", true)
+            if Main then AddGlow(Main) end
+            
+            local KeyWin = gui:FindFirstChild("KeySystem", true)
+            if KeyWin then AddGlow(KeyWin) end
+        end
+    end
+end)
+
+--// 4. UI WINDOW (CLEAN NAME)
 local Window = Rayfield:CreateWindow({
-   Name = "•GemTitanOptimizer•|•Ultimate Crystal v6.0• 🔮",
-   LoadingTitle = "GemTitan is Loading...",
-   LoadingSubtitle = "Finding the katest version for user...",
+   Name = "•GemTitanOptimizer •|• OMEGA v7.0•", -- Requested Clean Name
+   LoadingTitle = "GemTitan is loading",
+   LoadingSubtitle = "Finding the latest version...", -- Clean subtitle
    Theme = "Amethyst",
    
-   -- CONFIG SİSTEMİ (Auto-Load Mantığı Burada)
    ConfigurationSaving = {
       Enabled = true,
       FolderName = "GemTitanOmega", 
@@ -57,9 +88,9 @@ local Window = Rayfield:CreateWindow({
    
    KeySystem = true,
    KeySettings = {
-      Title = "Optimization Access",
+      Title = "Optimization Key Access",
       Subtitle = "Security Protocol",
-      Note = "get key by adding and messaging gojonunyaragi on discord",
+      Note = "get yout key from discord:gojonunyaragi,tiktok:syroxtech1",
       FileName = "GemTitanKeyFile",
       SaveKey = true,
       GrabKeyFromSite = false,
@@ -67,58 +98,91 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
---// 4. YARDIMCI FONKSİYONLAR & FPS GUI
+--// 5. UTILS & ADVANCED FPS GUI
 local function SendNotif(title, text)
     Rayfield:Notify({ Title = title, Content = text, Duration = 2, Image = 4483345998 })
 end
 
--- Dinamik FPS Sayacı (ScreenGui)
+-- Dynamic FPS Counter (Smooth Drag & Neon)
 local FPSGui = nil
 local function ToggleFPSCounter(state)
     if state then
         if FPSGui then FPSGui:Destroy() end
         FPSGui = Instance.new("ScreenGui")
-        FPSGui.Name = "FPS monitor"
-        FPSGui.Parent = CoreGui -- UI'ın üstünde dursun
+        FPSGui.Name = "FPS Monitor"
+        FPSGui.Parent = CoreGui
         
+        local Frame = Instance.new("Frame")
+        Frame.Name = "MainFrame"
+        Frame.Parent = FPSGui
+        Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Frame.Size = UDim2.new(0, 120, 0, 40)
+        Frame.Position = UDim2.new(0.5, -60, 0, 20)
+        Frame.BorderSizePixel = 0
+        Frame.Active = true 
+        Frame.Draggable = false 
+
+        -- Round Corners
+        local Corner = Instance.new("UICorner")
+        Corner.CornerRadius = UDim.new(0, 30) 
+        Corner.Parent = Frame
+
+        -- Neon Glow
+        local Stroke = Instance.new("UIStroke")
+        Stroke.Color = Color3.fromRGB(170, 0, 255)
+        Stroke.Thickness = 2.5
+        Stroke.Transparency = 0.1
+        Stroke.Parent = Frame
+
+        -- Label
         local Label = Instance.new("TextLabel")
-        Label.Parent = FPSGui
-        Label.Size = UDim2.new(0, 100, 0, 30)
-        Label.Position = UDim2.new(0.5, -50, 0, 10) -- Üst Orta
-        Label.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        Label.TextColor3 = Color3.fromRGB(170, 0, 255) -- Mor
-        Label.BackgroundTransparency = 0.3
-        Label.BorderSizePixel = 0
+        Label.Parent = Frame
+        Label.Size = UDim2.new(1, 0, 1, 0)
+        Label.BackgroundTransparency = 1
         Label.Font = Enum.Font.GothamBold
         Label.TextSize = 18
-        Label.Text = "FPS: .."
+        Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Label.Text = "FPS: ..."
         
-        -- Sürükleme Özelliği
+        -- Smooth Dragging Logic
         local dragging, dragInput, dragStart, startPos
-        Label.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        
+        Frame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = true
                 dragStart = input.Position
-                startPos = Label.Position
+                startPos = Frame.Position
+                
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        dragging = false
+                    end
+                end)
             end
         end)
-        Label.InputChanged:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+
+        Frame.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                dragInput = input
+            end
         end)
+
         UserInputService.InputChanged:Connect(function(input)
             if input == dragInput and dragging then
                 local delta = input.Position - dragStart
-                Label.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
             end
         end)
-        Label.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
-        end)
 
-        -- FPS Güncelleme
         RunService.RenderStepped:Connect(function(dt)
             if Label and Label.Parent then
-                Label.Text = "FPS: " .. math.floor(1/dt)
+                local fps = math.floor(1/dt)
+                Label.Text = "FPS: " .. fps
+                if fps < 30 then
+                    Label.TextColor3 = Color3.fromRGB(255, 50, 50)
+                else
+                    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+                end
             end
         end)
     else
@@ -135,7 +199,7 @@ local TitanCortex = {}
 function SmartTech.PhysicsBubble(state)
     GemTitan.Config.PhysicsBubble = state
     if state then
-        SendNotif("Cortex AI", "Dinamik Fizik Balonu: AKTİF 🫧")
+        SendNotif("Cortex AI", "Dynamic Physics Bubble: ACTIVE 🫧")
         GemTitan.Loops.PhysBubble = RunService.Heartbeat:Connect(function()
             if os.clock() % 0.1 < 0.01 then
                 local char = LocalPlayer.Character
@@ -156,13 +220,13 @@ function SmartTech.PhysicsBubble(state)
         end)
     else
         if GemTitan.Loops.PhysBubble then GemTitan.Loops.PhysBubble:Disconnect() end
-        SendNotif("Cortex AI", "Fizik Balonu: KAPALI")
+        SendNotif("Cortex AI", "Physics Bubble: DISABLED")
     end
 end
 
 function TitanCortex.HookNewParts(state)
     if state then
-        SendNotif("Cortex AI", "Hook: AKTİF (Yeni Efektler Silinecek)")
+        SendNotif("Cortex AI", "Hook: ACTIVE (Blocking New Effects)")
         GemTitan.Connections.Added = Workspace.DescendantAdded:Connect(function(obj)
             if obj:IsA("ParticleEmitter") or obj:IsA("Explosion") or obj:IsA("Smoke") or obj:IsA("Debris") then
                 RunService.Heartbeat:Wait()
@@ -171,12 +235,12 @@ function TitanCortex.HookNewParts(state)
         end)
     else
         if GemTitan.Connections.Added then GemTitan.Connections.Added:Disconnect() end
-        SendNotif("Cortex AI", "Hook: DURDURULDU")
+        SendNotif("Cortex AI", "Hook: STOPPED")
     end
 end
 
 --------------------------------------------------------------------------------
---// TOGGLE & DESTRUCTIVE LOGIC (KISA ÖZET)
+--// TOGGLE & DESTRUCTIVE LOGIC
 --------------------------------------------------------------------------------
 local GemLogic = {} 
 local TitanLogic = {} 
@@ -189,10 +253,10 @@ function GemLogic.ToggleTextures(state)
             if v:IsA("BasePart") and not v:IsA("MeshPart") then v.Material = Enum.Material.SmoothPlastic
             elseif v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 1 end
         end
-        SendNotif("GemBoost", "Dokular Gizlendi")
+        SendNotif("GemBoost", "Textures Hidden")
     else
         for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 0 end end
-        SendNotif("GemBoost", "Dokular Geri Geldi")
+        SendNotif("GemBoost", "Textures Restored")
     end
 end
 
@@ -200,13 +264,13 @@ function GemLogic.ToggleEffects(state)
     for _, v in pairs(Lighting:GetChildren()) do
         if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("BloomEffect") or v:IsA("BlurEffect") then v.Enabled = not state end
     end
-    SendNotif("GemBoost", state and "Efektler Gizlendi" or "Efektler Geri Geldi")
+    SendNotif("GemBoost", state and "Effects Hidden" or "Effects Restored")
 end
 
 function GemLogic.ToggleShadows(state)
     Lighting.GlobalShadows = not state
     for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") then v.CastShadow = not state end end
-    SendNotif("GemBoost", state and "Gölgeler Kapandı" or "Gölgeler Açıldı")
+    SendNotif("GemBoost", state and "Shadows Disabled" or "Shadows Enabled")
 end
 
 -- (Basics Toggle)
@@ -230,49 +294,49 @@ function TitanLogic.SmartCulling(state)
                 end
             end
         end)
-        SendNotif("Titanium", "Gizleme Açık")
+        SendNotif("Titanium", "Culling Enabled")
     else
         if GemTitan.Loops.Cull then GemTitan.Loops.Cull:Disconnect() end
         for _, part in pairs(Workspace:GetDescendants()) do if part:IsA("BasePart") then part.LocalTransparencyModifier = 0 end end
-        SendNotif("Titanium", "Gizleme Kapalı")
+        SendNotif("Titanium", "Culling Disabled")
     end
 end
 
--- (Destructive Functions)
-function GodLogic.NukeParticles() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") then v:Destroy() end end SendNotif("Aggressive", "Partiküller Silindi.") end
-function GodLogic.StopAnims() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Humanoid") then local a = v:FindFirstChildOfClass("Animator") if a then for _, t in pairs(a:GetPlayingAnimationTracks()) do t:Stop() end end end end SendNotif("Aggressive", "Animasyonlar Durdu.") end
-function GodLogic.RemoveAccessories() for _, p in pairs(Players:GetPlayers()) do if p.Character then for _, o in pairs(p.Character:GetChildren()) do if o:IsA("Accessory") or o:IsA("Hat") or o:IsA("Shirt") or o:IsA("Pants") then o:Destroy() end end end end SendNotif("Aggressive", "Aksesuarlar Silindi.") end
-function GodLogic.KillSounds() for _, v in pairs(game:GetDescendants()) do if v:IsA("Sound") then v:Destroy() end end SendNotif("Aggressive", "Sesler Silindi.") end
-function GodLogic.StripMeshes() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("MeshPart") then v.TextureID = "" end end SendNotif("Aggressive", "Mesh Dokuları Silindi.") end
-function GodLogic.RemoveGUI3D() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then v:Destroy() end end SendNotif("Aggressive", "3D GUI Silindi.") end
-function GodLogic.RemoveVehicles() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Seat") or v:IsA("VehicleSeat") then v:Destroy() end end SendNotif("Aggressive", "Araçlar Silindi.") end
-function GodLogic.DeleteTerrain() Workspace.Terrain:Clear() SendNotif("Aggressive", "Arazi Silindi.") end
-function GodLogic.AnchorAll() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") and v.Parent.Name ~= LocalPlayer.Name then v.Anchored = true end end SendNotif("Hyper", "Sabitlendi.") end
-function GodLogic.DowngradeLight() Lighting.Technology = Enum.Technology.Compatibility; Lighting.GlobalShadows = false; SendNotif("Hyper", "Işık Düşürüldü.") end
-function GodLogic.RemoveConstraints() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Constraint") or v:IsA("Weld") or v:IsA("Motor6D") then v:Destroy() end end SendNotif("Hyper", "Constraint Silindi.") end
-function GodLogic.DisableTouch() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") then v.CanTouch = false v.CanQuery = false end end SendNotif("Hyper", "Touch Kapandı.") end
-function GodLogic.KillStates() local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h:SetStateEnabled(Enum.HumanoidStateType.Climbing, false); h:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false) end SendNotif("Hyper", "Durumlar Kısıtlandı.") end
-function GodLogic.SleepParts() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") and not v.Anchored then v.Velocity = Vector3.zero end end SendNotif("Hyper", "Fizik Uyutuldu.") end
-function GodLogic.CleanScripts() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("LocalScript") and not v:IsDescendantOf(LocalPlayer.Character) then v:Destroy() end end SendNotif("Hyper", "Scriptler Temizlendi.") end
-function GodLogic.OverrideMaterials() for _, m in pairs(MaterialService:GetChildren()) do m:Destroy() end SendNotif("Hyper", "Materyaller Silindi.") end
-function GodLogic.VoidClean() Workspace.FallenPartsDestroyHeight = -10 SendNotif("Hyper", "Void Temizliği.") end
-function GodLogic.CleanLogs() if rconsoleclear then rconsoleclear() end SendNotif("Utils", "Loglar Temizlendi.") end
+-- (Destructive)
+function GodLogic.NukeParticles() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") then v:Destroy() end end SendNotif("Aggressive", "Particles Nuked.") end
+function GodLogic.StopAnims() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Humanoid") then local a = v:FindFirstChildOfClass("Animator") if a then for _, t in pairs(a:GetPlayingAnimationTracks()) do t:Stop() end end end end SendNotif("Aggressive", "Animations Stopped.") end
+function GodLogic.RemoveAccessories() for _, p in pairs(Players:GetPlayers()) do if p.Character then for _, o in pairs(p.Character:GetChildren()) do if o:IsA("Accessory") or o:IsA("Hat") or o:IsA("Shirt") or o:IsA("Pants") then o:Destroy() end end end end SendNotif("Aggressive", "Accessories Removed.") end
+function GodLogic.KillSounds() for _, v in pairs(game:GetDescendants()) do if v:IsA("Sound") then v:Destroy() end end SendNotif("Aggressive", "Sounds Killed.") end
+function GodLogic.StripMeshes() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("MeshPart") then v.TextureID = "" end end SendNotif("Aggressive", "Mesh Textures Stripped.") end
+function GodLogic.RemoveGUI3D() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then v:Destroy() end end SendNotif("Aggressive", "3D GUI Removed.") end
+function GodLogic.RemoveVehicles() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Seat") or v:IsA("VehicleSeat") then v:Destroy() end end SendNotif("Aggressive", "Vehicles Removed.") end
+function GodLogic.DeleteTerrain() Workspace.Terrain:Clear() SendNotif("Aggressive", "Terrain Deleted.") end
+function GodLogic.AnchorAll() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") and v.Parent.Name ~= LocalPlayer.Name then v.Anchored = true end end SendNotif("Hyper", "World Anchored.") end
+function GodLogic.DowngradeLight() Lighting.Technology = Enum.Technology.Compatibility; Lighting.GlobalShadows = false; SendNotif("Hyper", "Lighting Downgraded.") end
+function GodLogic.RemoveConstraints() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Constraint") or v:IsA("Weld") or v:IsA("Motor6D") then v:Destroy() end end SendNotif("Hyper", "Constraints Removed.") end
+function GodLogic.DisableTouch() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") then v.CanTouch = false v.CanQuery = false end end SendNotif("Hyper", "Touch Disabled.") end
+function GodLogic.KillStates() local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h:SetStateEnabled(Enum.HumanoidStateType.Climbing, false); h:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false) end SendNotif("Hyper", "States Restricted.") end
+function GodLogic.SleepParts() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("BasePart") and not v.Anchored then v.Velocity = Vector3.zero end end SendNotif("Hyper", "Physics Slept.") end
+function GodLogic.CleanScripts() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("LocalScript") and not v:IsDescendantOf(LocalPlayer.Character) then v:Destroy() end end SendNotif("Hyper", "Scripts Cleaned.") end
+function GodLogic.OverrideMaterials() for _, m in pairs(MaterialService:GetChildren()) do m:Destroy() end SendNotif("Hyper", "Materials Deleted.") end
+function GodLogic.VoidClean() Workspace.FallenPartsDestroyHeight = -10 SendNotif("Hyper", "Void Cleaned.") end
+function GodLogic.CleanLogs() if rconsoleclear then rconsoleclear() end SendNotif("Utils", "Logs Cleaned.") end
 
 --------------------------------------------------------------------------------
---// RAYFIELD UI ELEMENTLERİ
+--// RAYFIELD UI ELEMENTS
 --------------------------------------------------------------------------------
 
 -- [TAB 0] CORTEX AI
 local TabAI = Window:CreateTab("Cortex AI🧠", 4483362458)
 TabAI:CreateSection("Active Intelligence")
 TabAI:CreateToggle({ Name = "Adaptive Physics Bubble 🫧", CurrentValue = false, Flag = "PhysBubble", Callback = SmartTech.PhysicsBubble })
-TabAI:CreateLabel("Hızlandıkça balon genişler, durunca küçülür.")
+TabAI:CreateLabel("Bubble expands with speed, shrinks when stopped.")
 TabAI:CreateToggle({ Name = "Interceptor Hook (Auto-Delete) 🎣", CurrentValue = false, Flag = "AutoHook", Callback = TitanCortex.HookNewParts })
 
 -- [TAB 1] VISUALS (TOGGLE)
 local TabLight = Window:CreateTab("Visuals👁️", 4483362458)
 TabLight:CreateSection("Toggleable Graphics")
-TabLight:CreateToggle({ Name = "Hide Textures (Plastik) 🧱", CurrentValue = false, Flag = "TexTog", Callback = GemLogic.ToggleTextures })
+TabLight:CreateToggle({ Name = "Hide Textures (Plastic) 🧱", CurrentValue = false, Flag = "TexTog", Callback = GemLogic.ToggleTextures })
 TabLight:CreateToggle({ Name = "Disable Effects ✨", CurrentValue = false, Flag = "EffTog", Callback = GemLogic.ToggleEffects })
 TabLight:CreateToggle({ Name = "Disable Shadows 🌑", CurrentValue = false, Flag = "ShadTog", Callback = GemLogic.ToggleShadows })
 
@@ -309,33 +373,26 @@ TabHyper:CreateButton({ Name = "15. Delete Map Scripts", Callback = GodLogic.Cle
 TabHyper:CreateButton({ Name = "16. Override Materials", Callback = GodLogic.OverrideMaterials })
 TabHyper:CreateButton({ Name = "17. Fast Void Clean", Callback = GodLogic.VoidClean })
 
--- [TAB 5] ALTERNATIVES (YENİ TAB)
+-- [TAB 5] ALTERNATIVES
 local TabAlt = Window:CreateTab("Scripts📂", 4483362458)
 TabAlt:CreateSection("Legacy & Modules")
-TabAlt:CreateLabel("Zenith'in diğer projeleri.")
-
+TabAlt:CreateLabel("Zenith's other projects.")
 TabAlt:CreateButton({
-    Name = "▶ Titanium Optimizer Gen2 (AI)",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/Titanium-Optimizer-Gen2-AI/main/Main.lua"))()
-    end,
+    Name = "1.▶ Titanium Optimizer Gen2 (AI) (mostly recommended)",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/Titanium-Optimizer-Gen2-AI/main/Main.lua"))() end,
 })
-
 TabAlt:CreateButton({
-    Name = "▶ GEMBOOST X 2026 Module",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/GEMBOOST-X-2026/main/Main.lua"))()
-    end,
+    Name = "2.▶ GEMBOOST X 2026 Module (not recommended)",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/GEMBOOST-X-2026/main/Main.lua"))() end,
 })
 
 -- [TAB 6] UTILS
 local TabUtils = Window:CreateTab("Utils🛠️", 4483362458)
 TabUtils:CreateSection("Management")
--- YENİ FPS COUNTER TOGGLE
-TabUtils:CreateToggle({ Name = "Dynamic FPS HUD (Moveable)", CurrentValue = false, Flag = "DynFPS", Callback = ToggleFPSCounter })
-TabUtils:CreateToggle({ Name = "No Render (Black Screen) ⬛", CurrentValue = false, Flag = "NoRender", Callback = function(V) RunService:Set3dRenderingEnabled(not V) end })
-TabUtils:CreateButton({ Name = "Clean Console/Logs", Callback = GodLogic.CleanLogs })
+TabUtils:CreateToggle({ Name = "FPS HUD🖥️", CurrentValue = false, Flag = "DynFPS", Callback = ToggleFPSCounter })
+TabUtils:CreateToggle({ Name = "No Render (cooldown device) ⬛", CurrentValue = false, Flag = "NoRender", Callback = function(V) RunService:Set3dRenderingEnabled(not V) end })
+TabUtils:CreateButton({ Name = "Clean Console/Logs 🧹", Callback = GodLogic.CleanLogs })
 TabUtils:CreateButton({ Name = "Rejoin Server 🔄", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
-TabUtils:CreateButton({ Name = "Destroy UI", Callback = function() Rayfield:Destroy() end })
+TabUtils:CreateButton({ Name = "Destroy UI ⛔", Callback = function() Rayfield:Destroy() end })
 
-TabUtils:CreateLabel("Engineered by Zenith")
+TabUtils:CreateLabel("Script by Zenith")

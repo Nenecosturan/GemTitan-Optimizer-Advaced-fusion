@@ -1,12 +1,13 @@
 --[[
     GemTitan | OMEGA
     Coder: Zenith (bizkizlar)
-    Version: v7.0 (Crystal Build)
+    Version: v7.8 (Mobile Utils Update)
     
     Notes:
-    - Key changed to "Crystal".
+    - Key: "Crystal"
     - High-End Optimization Logic.
-    - Neon UI & AI Systems active.
+    - REJOIN SYSTEM: Fully Active & Linked.
+    - NEW: Anti-AFK, White Screen & RAM Cleaner added to Utils.
 ]]
 
 --// 1. LIBRARIES AND SERVICES
@@ -19,6 +20,8 @@ local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService") 
+local MaterialService = game:GetService("MaterialService")
+local VirtualUser = game:GetService("VirtualUser") -- Anti-AFK için eklendi
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
@@ -36,7 +39,9 @@ local GemTitan = {
         Tech = Lighting.Technology
     },
     Config = {
-        PhysicsBubble = false
+        PhysicsBubble = false,
+        -- ONCEKI LINK AYNI SEKILDE KORUNDU:
+        ScriptURL = "https://raw.githubusercontent.com/Nenecosturan/GemTitan-Optimizer-Advaced-fusion/main/Main.lua" 
     }
 }
 
@@ -74,7 +79,7 @@ end)
 
 --// 4. UI WINDOW (KEY: CRYSTAL)
 local Window = Rayfield:CreateWindow({
-   Name = "GemTitan | OMEGA v7.5",
+   Name = "GemTitanOptimizer | OMEGA v7.8",
    LoadingTitle = "GemTitan Loading...",
    LoadingSubtitle = "Finding latest version...",
    Theme = "Amethyst",
@@ -91,11 +96,11 @@ local Window = Rayfield:CreateWindow({
    KeySettings = {
       Title = "Optimization Access",
       Subtitle = "Security Protocol",
-      Note = "The key is Crystal", -- GÜNCELLENDİ
-      FileName = "GemTitanKeyFile_Crystal", -- Dosya adı çakışmasın diye değiştirdim
+      Note = "The Key Is Crystal", 
+      FileName = "GemTitanKeyFile_Crystal", 
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = "Crystal" -- YENİ KEY
+      Key = "Crystal" 
    }
 })
 
@@ -177,7 +182,7 @@ local function ToggleFPSCounter(state)
 
         RunService.RenderStepped:Connect(function(dt)
             if Label and Label.Parent then
-                local fps = math.floor(1/dt)
+                local fps = math.floor(100/dt)
                 Label.Text = "FPS: " .. fps
                 if fps < 30 then
                     Label.TextColor3 = Color3.fromRGB(255, 50, 50)
@@ -303,6 +308,15 @@ function TitanLogic.SmartCulling(state)
     end
 end
 
+function TitanLogic.InvisibleWalls()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") and v.Transparency == 1 and v.CanCollide then
+            v:Destroy()
+        end
+    end
+    SendNotif("Titanium", "Invisible Walls Removed")
+end
+
 -- (Destructive)
 function GodLogic.NukeParticles() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") then v:Destroy() end end SendNotif("Aggressive", "Particles Nuked.") end
 function GodLogic.StopAnims() for _, v in pairs(Workspace:GetDescendants()) do if v:IsA("Humanoid") then local a = v:FindFirstChildOfClass("Animator") if a then for _, t in pairs(a:GetPlayingAnimationTracks()) do t:Stop() end end end end SendNotif("Aggressive", "Animations Stopped.") end
@@ -322,6 +336,58 @@ function GodLogic.CleanScripts() for _, v in pairs(Workspace:GetDescendants()) d
 function GodLogic.OverrideMaterials() for _, m in pairs(MaterialService:GetChildren()) do m:Destroy() end SendNotif("Hyper", "Materials Deleted.") end
 function GodLogic.VoidClean() Workspace.FallenPartsDestroyHeight = -10 SendNotif("Hyper", "Void Cleaned.") end
 function GodLogic.CleanLogs() if rconsoleclear then rconsoleclear() end SendNotif("Utils", "Logs Cleaned.") end
+
+--------------------------------------------------------------------------------
+--// NEW UTILS FUNCTIONS (MOBILE OPTIMIZED)
+--------------------------------------------------------------------------------
+local UtilsLogic = {}
+
+-- Anti-AFK (Mobile Friendly)
+function UtilsLogic.AntiAFK()
+    if getgenv().AntiAFKRunning then return end
+    getgenv().AntiAFKRunning = true
+    
+    LocalPlayer.Idled:Connect(function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+    end)
+    SendNotif("System", "Anti-AFK Active (Mobile)")
+end
+
+-- White Screen Mode (Battery Saver)
+local WhiteScreenGui = nil
+function UtilsLogic.WhiteScreen(state)
+    if state then
+        RunService:Set3dRenderingEnabled(false) -- GPU Saver
+        
+        WhiteScreenGui = Instance.new("ScreenGui")
+        WhiteScreenGui.Parent = CoreGui
+        WhiteScreenGui.Name = "GemTitanWhiteScreen"
+        WhiteScreenGui.IgnoreGuiInset = true
+        WhiteScreenGui.DisplayOrder = 9999 -- Topmost
+        
+        local Frame = Instance.new("Frame")
+        Frame.Parent = WhiteScreenGui
+        Frame.Size = UDim2.new(1, 0, 1, 0)
+        Frame.BackgroundColor3 = Color3.new(1, 1, 1) -- Pure White
+        Frame.BorderSizePixel = 0
+        
+        SendNotif("GPU Saver", "White Screen Mode: ON")
+    else
+        RunService:Set3dRenderingEnabled(true)
+        if WhiteScreenGui then WhiteScreenGui:Destroy() end
+        SendNotif("GPU Saver", "Normal View Restored")
+    end
+end
+
+-- RAM Cleaner
+function UtilsLogic.CleanRAM()
+    local startMem = math.floor(game:GetService("Stats"):GetTotalMemoryUsageMb())
+    collectgarbage("collect")
+    local endMem = math.floor(game:GetService("Stats"):GetTotalMemoryUsageMb())
+    SendNotif("Memory", "Cleaned: " .. (startMem - endMem) .. " MB")
+end
+
 
 --------------------------------------------------------------------------------
 --// RAYFIELD UI ELEMENTS
@@ -362,38 +428,4 @@ TabAggressive:CreateButton({ Name = "7. Remove Vehicles", Callback = GodLogic.Re
 TabAggressive:CreateButton({ Name = "8. Delete Terrain", Callback = GodLogic.DeleteTerrain })
 
 -- [TAB 4] HYPER
-local TabHyper = Window:CreateTab("Hyper⚡", 4483362458)
-TabHyper:CreateSection("Engine Hacks")
-TabHyper:CreateButton({ Name = "1. Freeze World (Anchor)", Callback = GodLogic.AnchorAll })
-TabHyper:CreateButton({ Name = "2. Downgrade Lighting", Callback = GodLogic.DowngradeLight })
-TabHyper:CreateButton({ Name = "3. Remove Constraints", Callback = GodLogic.RemoveConstraints })
-TabHyper:CreateButton({ Name = "4. Disable CanTouch", Callback = GodLogic.DisableTouch })
-TabHyper:CreateButton({ Name = "5. Kill Humanoid States", Callback = GodLogic.KillStates })
-TabHyper:CreateButton({ Name = "6. Sleep Physics", Callback = GodLogic.SleepParts })
-TabHyper:CreateButton({ Name = "7. Delete Map Scripts", Callback = GodLogic.CleanScripts })
-TabHyper:CreateButton({ Name = "8. Override Materials", Callback = GodLogic.OverrideMaterials })
-TabHyper:CreateButton({ Name = "9. Fast Void Clean", Callback = GodLogic.VoidClean })
-
--- [TAB 5] ALTERNATIVES
-local TabAlt = Window:CreateTab("Scripts📂", 4483362458)
-TabAlt:CreateSection("Legacy & Modules")
-TabAlt:CreateLabel("Zenith's other projects.")
-TabAlt:CreateButton({
-    Name = "1.▶ Titanium Optimizer Gen2 AI (highly recommended)",
-    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/Titanium-Optimizer-Gen2-AI/main/Main.lua"))() end,
-})
-TabAlt:CreateButton({
-    Name = "2.▶ GEMBOOST X 2026 Module (not recommended)",
-    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Nenecosturan/GEMBOOST-X-2026/main/Main.lua"))() end,
-})
-
--- [TAB 6] UTILS
-local TabUtils = Window:CreateTab("Utils🛠️", 4483362458)
-TabUtils:CreateSection("Management")
-TabUtils:CreateToggle({ Name = "FPSMonitor 🖥️ ", CurrentValue = false, Flag = "DynFPS", Callback = ToggleFPSCounter })
-TabUtils:CreateToggle({ Name = "No Render (cooldown device)", CurrentValue = false, Flag = "NoRender", Callback = function(V) RunService:Set3dRenderingEnabled(not V) end })
-TabUtils:CreateButton({ Name = "Clean Console/Logs 🧹", Callback = GodLogic.CleanLogs })
-TabUtils:CreateButton({ Name = "Rejoin Server 🔄", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
-TabUtils:CreateButton({ Name = "Destroy UI ⛔", Callback = function() Rayfield:Destroy() end })
-
-TabUtils:CreateLabel("Engineered by Zenith")
+local TabHyper = Window:CreateTab("Hyper
